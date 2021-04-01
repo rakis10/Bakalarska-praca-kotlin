@@ -12,7 +12,7 @@ class Resource( val withdrawalService: WithdrawalService) {
         }
 
         @GetMapping(value = ["/{id}"])
-        fun getSingleTransaction(@PathVariable("id") id: String?): Withdrawal? {
+        fun getSingleTransaction(@PathVariable("id") id: String?): ResponseEntity<*>? {
                 //return  id;
                 return withdrawalService.getWithdrawal(id!!)
         }
