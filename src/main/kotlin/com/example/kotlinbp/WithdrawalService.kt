@@ -45,9 +45,9 @@ class WithdrawalService(val withdrawalRepo: WithdrawalRepo) {
         //val withdrawal: Optional<Withdrawal?> = withdrawalRepo.findById(id)
         // isPresent
         val w: Withdrawal
-        w = try {
+        try {
             checkExist(id)
-            withdrawalRepo.findById(id).get()
+            w = withdrawalRepo.findById(id).get()
         } catch (e: NoSuchElementException) {
             return ResponseEntity("No withdrawal with ID $id", HttpStatus.NOT_FOUND)
         } catch (e: WithdrawalException) {
@@ -59,9 +59,12 @@ class WithdrawalService(val withdrawalRepo: WithdrawalRepo) {
     }
 
     fun createWithdrawal(withdrawal: Withdrawal): ResponseEntity<*>? {
+        var id = withdrawalRepo.findTopByOrderByIdDesc()?.id!!.toInt() + 1
+        println(id)
+        withdrawal.id = id.toString()
         var sum = 0L
         for (m in withdrawal.money!!) {
-            sum += m.value + m.pieces
+            sum += m.value * m.pieces
         }
         withdrawal.price = sum
         try {
@@ -69,7 +72,7 @@ class WithdrawalService(val withdrawalRepo: WithdrawalRepo) {
 //            chechWithdrawal(withdrawal)
         } catch (e: WithdrawalException) {
             println(e.toString())
-            return ResponseEntity<Any>(e, HttpStatus.NOT_ACCEPTABLE)
+            return ResponseEntity<Any>(withdrawal, HttpStatus.NOT_ACCEPTABLE)
         }
 
         withdrawalRepo.save(withdrawal)

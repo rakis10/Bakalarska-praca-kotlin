@@ -5,4 +5,5 @@ import java.util.*
 
 interface WithdrawalRepo : MongoRepository<Withdrawal?, String?> {
     override fun findById(id: String): Optional<Withdrawal?>
+    fun findTopByOrderByIdDesc(): Withdrawal?
 }
